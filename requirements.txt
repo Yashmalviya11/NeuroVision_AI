@@ -11,3 +11,4 @@ streamlit
 plotly
 reportlab
 tqdm
+grad-cam
