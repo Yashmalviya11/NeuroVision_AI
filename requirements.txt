@@ -1,7 +1,7 @@
 torch
 torchvision
 timm
-opencv-python
+opencv-python-headless
 numpy
 pandas
 matplotlib
