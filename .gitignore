@@ -14,8 +14,6 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Model Files
-*.pth
 
 # Outputs
 outputs/
