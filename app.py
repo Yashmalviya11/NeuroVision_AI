@@ -85,10 +85,11 @@ st.markdown("---")
 page = st.sidebar.radio(
     "Navigation",
     [
-        "Prediction",
-        "Prediction History",
-        "Model Performance",
-        "About Project"
+        "🏠 Home",
+        "🧠 Prediction",
+        "📜 Prediction History",
+        "📊 Model Performance",
+        "ℹ️ About Project"
     ]
 )
 
@@ -108,9 +109,57 @@ gradcam = ViTGradCAM(predictor)
 create_database()
 
 # =====================================================
+# Home Page
+# =====================================================
+
+if page == "🏠 Home":
+
+    st.title("🧠 Welcome to NeuroVision AI")
+
+    st.markdown("""
+### Explainable AI Framework using Vision Transformers
+for Alzheimer's Disease Prediction
+
+NeuroVision AI is an AI-powered clinical decision support system
+that predicts Alzheimer's Disease from MRI brain scans using
+Vision Transformers (ViT) and explains predictions using Grad-CAM.
+
+---
+
+### 🚀 Features
+
+- 🧠 Alzheimer's Disease Prediction
+- 🔥 Explainable AI (Grad-CAM)
+- 👤 Patient Management
+- 📊 Analytics Dashboard
+- 📄 PDF Medical Reports
+- 📈 Model Performance
+- 🗄 SQLite Database
+
+---
+
+### 🎯 How to Use
+
+1. Go to **Prediction**
+2. Enter Patient Details
+3. Upload MRI Image
+4. Click **Predict**
+5. View AI Result and Grad-CAM
+6. Download PDF Report
+
+---
+
+### 👨‍💻 Developed By
+
+**Yash Malviya**
+
+M.Sc. Data Science
+""")
+
+# =====================================================
 # Prediction Page
 # =====================================================
-if page == "Prediction":
+elif page == "🧠 Prediction":
 
     # -----------------------------
     # Patient Information
@@ -335,7 +384,7 @@ if page == "Prediction":
 # =====================================================
 # Prediction History
 # =====================================================
-elif page == "Prediction History":
+elif page == "📜 Prediction History":
 
     st.title("📜 Prediction History")
 
@@ -616,7 +665,7 @@ elif page == "Prediction History":
 # Model Performance
 # =====================================================
 
-elif page == "Model Performance":
+elif page == "📊 Model Performance":
 
     st.title("📊 Model Performance")
 
@@ -686,7 +735,7 @@ elif page == "Model Performance":
 # About Project
 # =====================================================
 
-elif page == "About Project":
+elif page == "ℹ️ About Project":
 
     st.title("ℹ️ About NeuroVision AI")
 
