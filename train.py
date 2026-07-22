@@ -1,149 +1,130 @@
-import os
-import copy
+from utils.dataset import get_dataloaders
+from utils.model_loader import load_model
+from utils.trainer import train_model
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
-
-import timm
-
-# =====================================================
-# Configuration
-# =====================================================
 
 TRAIN_DIR = "dataset/train"
 TEST_DIR = "dataset/test"
 
 IMAGE_SIZE = 224
-BATCH_SIZE = 32
-EPOCHS = 20
+BATCH_SIZE = 4    
+EPOCHS = 30
 LEARNING_RATE = 1e-4
 
 MODEL_SAVE_PATH = "models/best_model.pth"
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-print("=" * 60)
-print("NeuroVision AI - Vision Transformer Training")
-print("=" * 60)
-print(f"Using Device : {device}")
-print("=" * 60)
+def main():
 
-# =====================================================
-# Image Transformations
-# =====================================================
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-train_transform = transforms.Compose([
-    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(10),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
+    print("=" * 60)
+    print("NeuroVision AI - Vision Transformer Training")
+    print("=" * 60)
+    print(f"Using Device : {device}")
+    print("=" * 60)
+
+    # -----------------------------
+    # Load Dataset
+    # -----------------------------
+    train_loader, test_loader, class_names = get_dataloaders(
+        TRAIN_DIR,
+        TEST_DIR,
+        IMAGE_SIZE,
+        BATCH_SIZE,
+        num_workers=0
     )
-])
 
-test_transform = transforms.Compose([
-    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
+    print("\nDetected Classes:")
+    print(class_names)
+
+    print(f"\nTrain Images  : {len(train_loader.dataset)}")
+    print(f"Test Images   : {len(test_loader.dataset)}")
+    print(f"Train Batches : {len(train_loader)}")
+    print(f"Test Batches  : {len(test_loader)}")
+
+    # -----------------------------
+    # Test DataLoader
+    # -----------------------------
+    print("\nTesting DataLoader...")
+
+    images, labels = next(iter(train_loader))
+
+    print("DataLoader Working")
+    print("Image Shape :", images.shape)
+    print("Label Shape :", labels.shape)
+
+    # -----------------------------
+    # Load Model
+    # -----------------------------
+    print("\nLoading Vision Transformer...")
+
+    model = load_model(len(class_names))
+    model = model.to(device)
+
+    print("Model Loaded Successfully!")
+
+    print(model.head)
+
+    # -----------------------------
+    # Test GPU Forward Pass
+    # -----------------------------
+    print("\nTesting GPU Forward Pass...")
+
+    images = images.to(device)
+
+    with torch.no_grad():
+        outputs = model(images)
+
+    print("GPU Forward Pass Successful")
+    print("Output Shape :", outputs.shape)
+    
+    criterion = nn.CrossEntropyLoss()
+    
+    # -----------------------------
+    # Optimizer
+    # -----------------------------
+    optimizer = optim.AdamW(
+        model.parameters(),
+        lr=LEARNING_RATE
     )
-])
 
-# =====================================================
-# Dataset
-# =====================================================
+    # -----------------------------
+    # Scheduler
+    # -----------------------------
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode="min",
+        factor=0.5,
+        patience=3,
+        min_lr=1e-4
+    )
 
-train_dataset = datasets.ImageFolder(
-    TRAIN_DIR,
-    transform=train_transform
-)
+    print("\nOptimizer : AdamW")
+    print("Loss      : CrossEntropyLoss")
+    print("Scheduler : ReduceLROnPlateau")
 
-test_dataset = datasets.ImageFolder(
-    TEST_DIR,
-    transform=test_transform
-)
+    print("\nEverything Loaded Successfully.")
+    print("=" * 60)
 
-train_loader = DataLoader(
-    train_dataset,
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-    num_workers=4,
-    pin_memory=True
-)
+    # -----------------------------
+    # Start Training
+    # -----------------------------
+    train_model(
+        model=model,
+        train_loader=train_loader,
+        val_loader=test_loader,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        device=device,
+        epochs=EPOCHS,
+        model_save_path=MODEL_SAVE_PATH
+    )
 
-test_loader = DataLoader(
-    test_dataset,
-    batch_size=BATCH_SIZE,
-    shuffle=False,
-    num_workers=4,
-    pin_memory=True
-)
 
-print("\nDetected Classes:")
-print(train_dataset.classes)
-
-print(f"\nTraining Images : {len(train_dataset)}")
-print(f"Testing Images  : {len(test_dataset)}")
-
-# =====================================================
-# Load Vision Transformer
-# =====================================================
-
-print("\nLoading Vision Transformer...\n")
-
-model = timm.create_model(
-    "vit_base_patch16_224",
-    pretrained=True
-)
-
-# Replace classifier for Alzheimer's classes
-
-model.head = nn.Linear(
-    model.head.in_features,
-    len(train_dataset.classes)
-)
-
-model = model.to(device)
-
-print("Model Loaded Successfully!\n")
-
-print(model.head)
-
-# =====================================================
-# Loss Function
-# =====================================================
-
-criterion = nn.CrossEntropyLoss()
-
-# =====================================================
-# Optimizer
-# =====================================================
-
-optimizer = optim.AdamW(
-    model.parameters(),
-    lr=LEARNING_RATE
-)
-
-# =====================================================
-# Learning Rate Scheduler
-# =====================================================
-
-scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer,
-    mode="min",
-    factor=0.1,
-    patience=2
-)
-
-print("\nOptimizer : AdamW")
-print("Loss      : CrossEntropyLoss")
-print("Scheduler : ReduceLROnPlateau")
-
-print("\nEverything Loaded Successfully.")
-print("=" * 60)
+if __name__ == "__main__":
+    main()

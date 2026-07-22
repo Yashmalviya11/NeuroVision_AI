@@ -29,3 +29,9 @@ Thumbs.db
 
 # Dataset
 dataset/    
+
+# Database
+*.db
+
+# Generated Reports
+*_report.pdf
