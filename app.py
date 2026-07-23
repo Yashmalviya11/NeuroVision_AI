@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 from predict import Predictor
-from utils.gradcam_utils import ViTGradCAM
+#from utils.gradcam_utils import ViTGradCAM
 from utils.database import (
     create_database,
     save_prediction,
@@ -101,7 +101,7 @@ def load_model():
     return Predictor()
 
 predictor = load_model()
-gradcam = ViTGradCAM(predictor)
+#gradcam = ViTGradCAM(predictor)
 
 # -----------------------------
 # Create SQLite Database
