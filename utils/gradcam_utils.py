@@ -45,10 +45,13 @@ class ViTGradCAM:
             .unsqueeze(0)
             .to(self.device)
         )
-
+        
         grayscale_cam = self.cam(
-            input_tensor=input_tensor
+            input_tensor=input_tensor,
+            targets=None
         )[0]
+
+    
 
         rgb_img = (
             np.array(image.resize((224, 224)))
