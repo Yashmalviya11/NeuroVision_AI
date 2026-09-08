@@ -56,9 +56,9 @@ if not st.session_state.logged_in:
     st.stop()
     
 with st.sidebar:
-    st.caption("Administrator")
+    st.success("✅ Logged in as Admin") 
 
-    if st.button("Logout"):
+    if st.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.rerun()
         
@@ -85,11 +85,11 @@ st.markdown("---")
 page = st.sidebar.radio(
     "Navigation",
     [
-        "Home",
-        "Prediction",
-        "Prediction History",
-        "Model Performance",
-        "About Project"
+        "🏠 Home",
+        "🧠 Prediction",
+        "📜 Prediction History",
+        "📊 Model Performance",
+        "ℹ️ About Project"
     ]
 )
 
@@ -112,9 +112,9 @@ create_database()
 # Home Page
 # =====================================================
 
-if page == "Home":
+if page == "🏠 Home":
 
-    st.title("Welcome to NeuroVision AI")
+    st.title("🧠 Welcome to NeuroVision AI")
 
     st.markdown("""
 ### Explainable AI Framework using Vision Transformers
@@ -128,13 +128,13 @@ Vision Transformers (ViT) and explains predictions using Grad-CAM.
 
 ### 🚀 Features
 
--  Alzheimer's Disease Prediction
--  Explainable AI (Grad-CAM)
--  Patient Management
--  Analytics Dashboard
--  PDF Medical Reports
--  Model Performance
--  SQLite Database
+- 🧠 Alzheimer's Disease Prediction
+- 🔥 Explainable AI (Grad-CAM)
+- 👤 Patient Management
+- 📊 Analytics Dashboard
+- 📄 PDF Medical Reports
+- 📈 Model Performance
+- 🗄 SQLite Database
 
 ---
 
@@ -149,13 +149,17 @@ Vision Transformers (ViT) and explains predictions using Grad-CAM.
 
 ---
 
+### 👨‍💻 Developed By
 
+**Yash Malviya**
+
+M.Sc. Data Science
 """)
 
 # =====================================================
 # Prediction Page
 # =====================================================
-elif page == "Prediction":
+elif page == "🧠 Prediction":
 
     # -----------------------------
     # Patient Information
@@ -857,4 +861,15 @@ Classes:
         "It should assist healthcare professionals and must not replace clinical diagnosis."
     )
     
+st.markdown("---")
 
+st.markdown(
+    """
+    <div style='text-align: center; color: gray; font-size: 14px;'>
+        🧠 <b>NeuroVision AI v1.0</b><br>
+        Developed by <b>Yash Malviya</b> | M.Sc. Data Science<br>
+        Vision Transformer (ViT) • Explainable AI • Streamlit
+    </div>
+    """,
+    unsafe_allow_html=True
+)
