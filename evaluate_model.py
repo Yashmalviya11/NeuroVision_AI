@@ -108,7 +108,7 @@ print(
 
 cm = confusion_matrix(y_true, y_pred)
 
-plt.figure(figsize=(7,6))
+plt.figure(figsize=(12, 8))
 
 sns.heatmap(
     cm,
@@ -119,10 +119,19 @@ sns.heatmap(
     yticklabels=class_names
 )
 
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-plt.title("Confusion Matrix")
+plt.xlabel("Predicted", fontsize=12)
+plt.ylabel("Actual", fontsize=12)
+plt.title("Confusion Matrix", fontsize=18)
 
-plt.savefig("confusion_matrix.png")
+plt.xticks(rotation=25, ha="right")
+plt.yticks(rotation=0)
 
-plt.show()
+plt.tight_layout()
+
+plt.savefig(
+    "confusion_matrix.png",
+    dpi=150,
+    bbox_inches="tight"
+)
+
+plt.close()
